@@ -1,45 +1,46 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
 
-# Route to serve the index.html
+# Route for rendering the calculator interface
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# API endpoint 
-@app.route('/calculate', methods=['POST'])
+# Route for handling the calculation
+@app.route('/calculate', methods=['POST', 'GET'])
 def calculate():
-    data = request.get_json()
-    num1 = data.get('num1')
-    num2 = data.get('num2')
-    operation = data.get('operation')
-
-    if num1 is None or num2 is None or operation is None:
-        return jsonify({'error': 'Invalid input'}), 400
-
     try:
-        num1 = float(num1)
-        num2 = float(num2)
-    except ValueError:
-        return jsonify({'error': 'Invalid number format'}), 400
+        # Parse the JSON data from the frontend
+        data = request.get_json()
+        num1 = float(data.get('num1'))
+        num2 = float(data.get('num2'))
+        operation = data.get('operation')
 
-    # To Perform the operations
-    result = None
-    if operation == 'add':
-        result = num1 + num2
-    elif operation == 'subtract':
-        result = num1 - num2
-    elif operation == 'multiply':
-        result = num1 * num2
-    elif operation == 'divide':
-        if num2 == 0:
-            return jsonify({'error': 'Cannot divide by zero'}), 400
-        result = num1 / num2
-    else:
-        return jsonify({'error': 'Invalid operation'}), 400
+        # Perform the calculation based on the operation
+        if operation == 'add':
+            result = num1 + num2
+        elif operation == 'subtract':
+            result = num1 - num2
+        elif operation == 'multiply':
+            result = num1 * num2
+        elif operation == 'divide':
+            if num2 == 0:
+                return jsonify({'error': 'Division by zero is not allowed.'}), 400
+            result = num1 / num2
+        else:
+            return jsonify({'error': 'Invalid operation.'}), 400
 
-    return jsonify({'result': result})
+        # Return the result as JSON
+        return jsonify({'result': result})
+
+    except Exception as e:
+        # Handle errors
+        return jsonify({'error': str(e)}), 500
+
+
+
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5005, debug=True)
+#this will run in local only and i need to run in public also
