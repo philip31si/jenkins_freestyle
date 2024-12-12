@@ -18,13 +18,13 @@ def calculate():
         operation = data.get('operation')
 
         # Perform the calculation based on the operation
-        if operation == 'add':
+        if operation == 'addition':
             result = num1 + num2
-        elif operation == 'subtract':
+        elif operation == 'subtraction':
             result = num1 - num2
-        elif operation == 'multiply':
+        elif operation == 'multiplication':
             result = num1 * num2
-        elif operation == 'divide':
+        elif operation == 'division':
             if num2 == 0:
                 return jsonify({'error': 'Division by zero is not allowed.'}), 400
             result = num1 / num2
@@ -42,5 +42,5 @@ def calculate():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5002, debug=True)
+    app.run(host="0.0.0.0", port=5003, debug=True)
 #this will run in local only and i need to run in public also
