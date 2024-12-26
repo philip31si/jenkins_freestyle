@@ -37,6 +37,7 @@ phases:
 
 artifacts:
   files:
+    - templates
     - app.py
-    - Dockerfile
+    - Dockerfile.datacalci
     - requirements.txt
