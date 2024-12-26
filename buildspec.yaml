@@ -1,0 +1,42 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+    commands:
+      # Install Docker
+      - echo Installing Docker...
+      - sudo yum update -y
+      - sudo yum install -y docker
+      - echo Docker installation complete
+
+  pre_build:
+    commands:
+      # Authenticate to Amazon ECR (if using ECR to store your Docker image)
+      - echo Logging into Amazon ECR...
+      
+      - aws sts get-caller-identity
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 607517443052.dkr.ecr.us-east-1.amazonaws.com <<< $(aws ecr get-login-password --region us-east-1)
+
+  build:
+    commands:
+   - echo Building the Docker image...
+      # Build the Docker image using the Dockerfile in the root directory
+      - docker build -t codebuild_1 .
+      
+      # Tag the image to match the ECR repository
+      
+  post_build:
+    commands:
+      # Push the Docker image to ECR (optional step if using ECR)
+      - echo Pushing the Docker image to Amazon ECR...
+      - docker tag new_calcifree:latest 607517443052.dkr.ecr.us-east-1.amazonaws.com/new_calcifree:latest
+      - docker push 607517443052.dkr.ecr.us-east-1.amazonaws.com/new_calcifree:latest
+
+artifacts:
+  files:
+    - app.py
+    - Dockerfile
+    - requirements.txt
